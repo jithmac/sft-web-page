@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Madushan Weerasinghe | Science for Technology</title>
+  <meta name="description" content="Science for Technology (SFT) classes by Madushan Weerasinghe. Empowering the next generation of scientists and technologists.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Interactive Network Background -->
+  <canvas id="networkCanvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; pointer-events: none; opacity: 1;"></canvas>
+  <!-- Loading Screen -->
+  <div id="loadingScreen">
+    <div class="loading-bg">
+      <svg class="loading-circuit" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice"></svg>
+    </div>
+    <div class="loading-content">
+      <h2>Loading SFT Experience…</h2>
+      <div class="progress-bar-container">
+        <div id="progressBar"></div>
+      </div>
+      <div id="progressText">0%</div>
+    </div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav id="navbar">
+    <div class="nav-left">
+      <div class="logo">SFT</div>
+      <svg class="logo-trace" viewBox="0 0 40 4" preserveAspectRatio="none">
+        <path d="M0,2 L20,2 L25,0 L30,4 L40,2" fill="none" stroke="var(--accent)" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="hamburger" id="hamburger">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <div class="nav-links" id="navLinks">
+      <a href="#heroWrapper" class="nav-link active">Home</a>
+      <a href="#aboutWrapper" class="nav-link">About</a>
+      <a href="#ttWrapper" class="nav-link">Timetable</a>
+      <a href="#footer" class="nav-link">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <div id="heroWrapper" class="scroll-wrapper" style="height: 500vh;">
+    <section id="hero" class="sticky-section" style="z-index: 20;">
+      <canvas id="heroCanvas"></canvas>
+      <div class="hero-overlay"></div>
+      
+      <div class="hero-particles">
+        <svg class="particle p-atom" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="40" ry="15" fill="none" stroke="currentColor" stroke-width="2" transform="rotate(30 50 50)"/><ellipse cx="50" cy="50" rx="40" ry="15" fill="none" stroke="currentColor" stroke-width="2" transform="rotate(-30 50 50)"/><ellipse cx="50" cy="50" rx="40" ry="15" fill="none" stroke="currentColor" stroke-width="2" transform="rotate(90 50 50)"/><circle cx="50" cy="50" r="5" fill="currentColor"/></svg>
+        <svg class="particle p-mol" viewBox="0 0 100 100"><line x1="30" y1="30" x2="70" y2="70" stroke="currentColor" stroke-width="2"/><line x1="70" y1="30" x2="30" y2="70" stroke="currentColor" stroke-width="2"/><circle cx="30" cy="30" r="10" fill="currentColor" opacity="0.5"/><circle cx="70" cy="70" r="10" fill="currentColor" opacity="0.5"/><circle cx="70" cy="30" r="10" fill="currentColor" opacity="0.5"/><circle cx="30" cy="70" r="10" fill="currentColor" opacity="0.5"/><circle cx="50" cy="50" r="12" fill="currentColor"/></svg>
+        <svg class="particle p-code" viewBox="0 0 100 100"><path d="M40,20 L10,50 L40,80 M60,20 L90,50 L60,80 M55,10 L45,90" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg class="particle p-circuit" viewBox="0 0 100 100"><polyline points="10,50 30,50 40,20 60,80 70,50 90,50" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="50" r="6" fill="currentColor"/><circle cx="90" cy="50" r="6" fill="currentColor"/></svg>
+      </div>
+
+      <div id="heroText">
+        <p id="heroTagSub" class="hero-sub">Science for Technology</p>
+        <h1 id="heroTagline" class="hero-tagline">SFT for Life</h1>
+        <p id="heroDesc" class="hero-desc">
+          Empowering the next generation of scientists and technologists
+          through hands-on learning and real-world exploration.
+        </p>
+        <h2 id="heroName" class="hero-name">Madushan Weerasinghe</h2>
+        <div id="heroBtns" class="hero-buttons">
+          <button class="btn-primary">Find Your Class</button>
+          <button class="btn-outline">Go to LMS</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- About Section -->
+  <div id="aboutWrapper" class="scroll-wrapper" style="height: 500vh;">
+    <section id="about" class="sticky-section" style="z-index: 30;">
+      <div class="about-grid"></div>
+      <svg class="about-ruler" width="100%" height="48" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="about-blueprints">
+        <svg viewBox="0 0 200 200" class="blueprint-svg">
+          <!-- Grid background -->
+          <pattern id="bp-grid" width="10" height="10" patternUnits="userSpaceOnUse">
+            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="var(--accent-mid)" stroke-width="0.3" opacity="0.2"/>
+          </pattern>
+          <rect width="200" height="200" fill="url(#bp-grid)" />
+          
+          <!-- Circuit Traces -->
+          <path class="bp-draw bp-trace1" d="M20,180 L20,140 L50,110 L150,110 L180,80 L180,20" fill="none" stroke="var(--accent-mid)" stroke-width="1.2" opacity="0.5"/>
+          <path class="bp-draw bp-trace2" d="M40,180 L40,150 L60,130 L100,130 L110,120 L110,80" fill="none" stroke="var(--accent-mid)" stroke-width="1.2" opacity="0.5"/>
+          <circle class="bp-draw bp-node" cx="20" cy="180" r="3" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.6"/>
+          <circle class="bp-draw bp-node" cx="180" cy="20" r="3" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.6"/>
+          
+          <!-- Physics Sine Wave -->
+          <path class="bp-draw bp-sine" d="M20,60 Q40,20 60,60 T100,60 T140,60 T180,60" fill="none" stroke="var(--accent-pale)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.4"/>
+          
+          <!-- Chemistry Hexagon -->
+          <polygon class="bp-draw bp-hex" points="160,160 175,150 175,130 160,120 145,130 145,150" fill="none" stroke="var(--accent-pale)" stroke-width="1.2" opacity="0.4"/>
+          <circle class="bp-draw bp-node" cx="160" cy="160" r="1.5" fill="var(--accent-pale)"/>
+          <line class="bp-draw bp-bond" x1="160" y1="120" x2="160" y2="100" stroke="var(--accent-pale)" stroke-width="1.2" opacity="0.4"/>
+        </svg>
+      </div>
+      <div class="about-decorations">
+        <!-- Beaker -->
+        <svg class="decor-icon d-beaker" viewBox="0 0 24 24"><path d="M10 2v3h4V2h-4zM6 22h12l-2-12H8l-2 12z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 16h8" stroke="currentColor" stroke-width="1.5"/></svg>
+        <!-- Resistor -->
+        <svg class="decor-icon d-resistor" viewBox="0 0 100 24"><path d="M0 12h20l5-8 10 16 10-16 10 16 10-16 10 16 5-8h20" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        <!-- Chart -->
+        <svg class="decor-icon d-chart" viewBox="0 0 24 24"><path d="M3 3v18h18" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 14l4-4 4 4 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      </div>
+      
+      <div class="about-content">
+        <!-- Bio Panel -->
+        <div class="about-bio" id="bioEl">
+          <span class="section-label">// About the Teacher</span>
+          <h2 class="about-heading">Mr. Madushan <br><em>Weerasinghe</em></h2>
+          <p class="about-para">
+            Mr. Madushan Weerasinghe is a passionate Science for Technology educator
+            dedicated to bridging theoretical knowledge with real-world engineering practice.
+            With over a decade of teaching experience, he inspires students to explore
+            the wonders of applied science, electronics, and modern technology.
+          </p>
+          <div class="about-stats">
+            <div class="stat-item"><span class="stat-num">10+</span><span class="stat-lbl">Years Teaching</span></div>
+            <div class="stat-item"><span class="stat-num">500+</span><span class="stat-lbl">Students</span></div>
+            <div class="stat-item"><span class="stat-num">3×</span><span class="stat-lbl">Award Winner</span></div>
+          </div>
+        </div>
+
+        <!-- Photo -->
+        <div class="about-photo-wrap" id="photoEl">
+          <svg class="photo-ring" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="48" stroke="var(--accent-mid)" stroke-width="1.5" fill="none" stroke-dasharray="10 5" />
+          </svg>
+          <img src="dp.jpg" alt="Madushan Weerasinghe">
+        </div>
+
+        <!-- CV Panel -->
+        <div class="cv-panel" id="cvPanel">
+          <div class="cv-group">
+            <h4>📚 Education</h4>
+            <ul>
+              <li>B.Sc. Physical Science — University of Colombo</li>
+              <li>PGDE in Science Education — NIE Sri Lanka</li>
+            </ul>
+          </div>
+          <div class="cv-group">
+            <h4>🏫 Experience</h4>
+            <ul>
+              <li>SFT Teacher — Mahinda College, Galle (2015–Present)</li>
+              <li>Laboratory Coordinator — [School Name] (2012–2015)</li>
+            </ul>
+          </div>
+          <div class="cv-group">
+            <h4>🏅 Achievements</h4>
+            <ul>
+              <li>Best Teacher Award — Ministry of Education, 2022</li>
+              <li>National Science Education Summit Speaker, 2023</li>
+            </ul>
+          </div>
+          <div class="cv-group">
+            <h4>🔬 Specialisations</h4>
+            <ul>
+              <li>Electronics & Circuit Design</li>
+              <li>Applied Physics & Measurements</li>
+              <li>STEM Project-Based Learning</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Timetable Section -->
+  <div id="ttWrapper" class="scroll-wrapper" style="height: 750vh;">
+    <section id="timetable" class="sticky-section" style="z-index: 40;">
+      <canvas id="ttCanvas"></canvas>
+      <div class="tt-matrix-bg" id="ttMatrixBg"></div>
+      <div class="tt-overlay"></div>
+      <div class="tt-header">
+        <span class="section-label">// Schedule</span>
+        <h2 class="tt-title">Class Timetable</h2>
+        <p class="tt-subtitle">Find your session and join the learning journey</p>
+      </div>
+      <div class="tt-cards-container" id="ttCardsContainer">
+        <!-- Cards generated by JS -->
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer Section -->
+  <section id="footer" class="sticky-section" style="z-index: 50; height: 100vh;">
+    <svg class="footer-circuit" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" id="footerCircuitSvg">
+      <!-- Generated via JS -->
+    </svg>
+    <div class="footer-inner">
+      <!-- Column 1: Brand -->
+      <div class="footer-col footer-brand">
+        <div class="footer-logo">SFT</div>
+        <p class="footer-tagline">Science for Technology<br>Empowering Future Engineers</p>
+        <div class="footer-deco-line"></div>
+      </div>
+
+      <!-- Column 2: Contact -->
+      <div class="footer-col footer-contact">
+        <h4>Get in Touch</h4>
+        <ul>
+          <li><span class="fc-icon">📧</span> teacher@sft.edu.lk</li>
+          <li><span class="fc-icon">📞</span> +94 71 XXX XXXX</li>
+          <li><span class="fc-icon">🏫</span> Mahinda College, Galle</li>
+          <li><span class="fc-icon">📍</span> Galle, Southern Province, Sri Lanka</li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Quick Links -->
+      <div class="footer-col footer-links">
+        <h4>Quick Links</h4>
+        <a class="btn-lms" href="#">⚡ Go to LMS</a>
+        <ul class="footer-nav">
+          <li><a href="#ttWrapper">📅 View Timetable</a></li>
+          <li><a href="#aboutWrapper">👤 About the Teacher</a></li>
+          <li><a href="#footer">📞 Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div class="footer-rule"></div>
+      <span>© 2025 Madushan Weerasinghe. All rights reserved.</span>
+      <span>Designed with <span class="bolt">⚡</span> for SFT</span>
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
