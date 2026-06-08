@@ -9,8 +9,6 @@
 </head>
 <body>
 
-  <!-- Interactive Network Background -->
-  <canvas id="networkCanvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; pointer-events: none; opacity: 1;"></canvas>
   <!-- Loading Screen -->
   <div id="loadingScreen">
     <div class="loading-bg">
@@ -51,6 +49,7 @@
     <section id="hero" class="sticky-section" style="z-index: 20;">
       <canvas id="heroCanvas"></canvas>
       <div class="hero-overlay"></div>
+      <canvas id="netCanvasHero" class="net-canvas"></canvas>
       
       <div class="hero-particles">
         <svg class="particle p-atom" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="40" ry="15" fill="none" stroke="currentColor" stroke-width="2" transform="rotate(30 50 50)"/><ellipse cx="50" cy="50" rx="40" ry="15" fill="none" stroke="currentColor" stroke-width="2" transform="rotate(-30 50 50)"/><ellipse cx="50" cy="50" rx="40" ry="15" fill="none" stroke="currentColor" stroke-width="2" transform="rotate(90 50 50)"/><circle cx="50" cy="50" r="5" fill="currentColor"/></svg>
@@ -79,6 +78,7 @@
   <div id="aboutWrapper" class="scroll-wrapper" style="height: 500vh;">
     <section id="about" class="sticky-section" style="z-index: 30;">
       <div class="about-grid"></div>
+      <canvas id="netCanvasAbout" class="net-canvas"></canvas>
       <svg class="about-ruler" width="100%" height="48" xmlns="http://www.w3.org/2000/svg"></svg>
       <div class="about-blueprints">
         <svg viewBox="0 0 200 200" class="blueprint-svg">
@@ -179,6 +179,7 @@
     <section id="timetable" class="sticky-section" style="z-index: 40;">
       <canvas id="ttCanvas"></canvas>
       <div class="tt-matrix-bg" id="ttMatrixBg"></div>
+      <canvas id="netCanvasTt" class="net-canvas"></canvas>
       <div class="tt-overlay"></div>
       <div class="tt-header">
         <span class="section-label">// Schedule</span>

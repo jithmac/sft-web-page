@@ -1,6 +1,3 @@
-// ==========================================
-// CONSTANTS & CONFIG
-// ==========================================
 const HERO_TOTAL_FRAMES = 80;
 const TIMETABLE_TOTAL_FRAMES = 100;
 const HERO_IMG_PATH = 'imgs/frame_';
@@ -8,6 +5,8 @@ const TT_IMG_PATH = 'imgs2/frame_';
 
 const heroImages = [];
 const ttImages = [];
+// ==========================================
+
 
 let isMobile = window.innerWidth < 768;
 
@@ -31,9 +30,11 @@ const progressBar = document.getElementById('progressBar');
 const progressText = document.getElementById('progressText');
 
 const heroCanvas = document.getElementById('heroCanvas');
-const heroCtx = heroCanvas.getContext('2d');
+const heroCtx = heroCanvas ? heroCanvas.getContext('2d') : null;
 const ttCanvas = document.getElementById('ttCanvas');
-const ttCtx = ttCanvas.getContext('2d');
+const ttCtx = ttCanvas ? ttCanvas.getContext('2d') : null;
+
+
 
 const heroWrapper = document.getElementById('heroWrapper');
 const aboutWrapper = document.getElementById('aboutWrapper');
@@ -45,71 +46,64 @@ const cvEl = document.getElementById('cvPanel');
 const ttCardsContainer = document.getElementById('ttCardsContainer');
 const aboutRulerEl = document.querySelector('.about-ruler');
 
-// State
 let lastHeroFrame = -1;
 let lastTtFrame = -1;
+
 let ticking = false;
 let isAutoScrolling = false;
 let lastScrollY = window.scrollY;
 let scrollEndTimeout = null;
 
-// ==========================================
-// LOADING SCREEN MODULE
-// ==========================================
-function preloadSequence(folderPath, total, imgArray, onProgress) {
-  return new Promise((resolve) => {
-    let loaded = 0;
-    for (let i = 1; i <= total; i++) {
-      const img = new Image();
-      const frameNum = i.toString().padStart(4, '0');
-      img.src = `${folderPath}${frameNum}.jpg`;
-      img.onload = () => {
-        loaded++;
-        onProgress();
-        if (loaded === total) resolve();
-      };
-      img.onerror = () => {
-        // Silently handle errors for missing frames to not block entirely
-        loaded++;
-        onProgress();
-        if (loaded === total) resolve();
-      };
-      imgArray.push(img);
-    }
-  });
+function preloadSequence(folderPath, total, imgArray, onProgress, onFirstFrame) {
+  let loaded = 0;
+  let firstFrameTriggered = false;
+  for (let i = 1; i <= total; i++) {
+    const img = new Image();
+    const frameNum = i.toString().padStart(4, '0');
+    img.src = `${folderPath}${frameNum}.jpg`;
+    img.onload = () => {
+      loaded++;
+      if (onProgress) onProgress(loaded, total);
+      if (i === 1 && onFirstFrame && !firstFrameTriggered) {
+        firstFrameTriggered = true;
+        onFirstFrame();
+      }
+    };
+    img.onerror = () => {
+      loaded++;
+      if (onProgress) onProgress(loaded, total);
+      if (i === 1 && onFirstFrame && !firstFrameTriggered) {
+        firstFrameTriggered = true;
+        onFirstFrame();
+      }
+    };
+    imgArray.push(img);
+  }
 }
 
 async function startLoadingScreen() {
-  generateFooterCircuit(); // Generate SVG before we display
+  generateFooterCircuit();
   generateTimetableCards();
 
-  let totalLoaded = 0;
-  const totalToLoad = HERO_TOTAL_FRAMES + TIMETABLE_TOTAL_FRAMES;
+  const heroFirstFrame = new Promise(resolve => preloadSequence(HERO_IMG_PATH, HERO_TOTAL_FRAMES, heroImages, null, resolve));
+  const ttFirstFrame = new Promise(resolve => preloadSequence(TT_IMG_PATH, TIMETABLE_TOTAL_FRAMES, ttImages, null, resolve));
 
-  const onProgress = () => {
-    totalLoaded++;
-    const percent = Math.floor((totalLoaded / totalToLoad) * 100);
-    progressBar.style.width = `${percent}%`;
-    progressText.innerText = `${percent}%`;
-  };
-
-  const heroPromise = preloadSequence(HERO_IMG_PATH, HERO_TOTAL_FRAMES, heroImages, onProgress);
-  const ttPromise = preloadSequence(TT_IMG_PATH, TIMETABLE_TOTAL_FRAMES, ttImages, onProgress);
-
-  await Promise.all([heroPromise, ttPromise]);
-  dismissLoadingScreen();
+  await Promise.all([heroFirstFrame, ttFirstFrame]);
+  
+  progressBar.style.width = `100%`;
+  progressText.innerText = `100%`;
+  
+  setTimeout(() => {
+    dismissLoadingScreen();
+  }, 50);
 }
 
 function dismissLoadingScreen() {
   loadingScreen.style.opacity = '0';
   loadingScreen.style.pointerEvents = 'none';
   
-  // Trigger initial renders
   handleResize();
-  renderFrame(heroCanvas, heroCtx, heroImages, 0);
-  renderFrame(ttCanvas, ttCtx, ttImages, 0);
   
-  // Trigger hero animation
   setTimeout(() => {
     document.getElementById('heroTagSub').style.animation = 'popIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both';
     document.getElementById('heroTagline').style.animation = 'popIn 1.0s cubic-bezier(0.22, 1, 0.36, 1) 0.55s both';
@@ -117,14 +111,11 @@ function dismissLoadingScreen() {
     document.getElementById('heroName').style.animation = 'popIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) 1.05s both';
   }, 300);
 
-  // Initial scroll check
   onScroll();
 }
 
-// ==========================================
-// CANVAS RENDER MODULE
-// ==========================================
 function renderFrame(canvas, ctx, images, index) {
+  if (!canvas || !ctx) return;
   if (!images[index] || !images[index].complete || images[index].naturalWidth === 0) return;
   const img = images[index];
   
@@ -136,7 +127,6 @@ function renderFrame(canvas, ctx, images, index) {
   let offsetX = 0;
   let offsetY = 0;
 
-  // Cover-fit logic
   if (canvasRatio > imgRatio) {
     drawHeight = canvas.width / imgRatio;
     offsetY = (canvas.height - drawHeight) / 2;
@@ -152,13 +142,17 @@ function renderFrame(canvas, ctx, images, index) {
 function handleResize() {
   isMobile = window.innerWidth < 768;
   
-  heroCanvas.width = window.innerWidth;
-  heroCanvas.height = window.innerHeight;
-  renderFrame(heroCanvas, heroCtx, heroImages, Math.max(0, lastHeroFrame));
+  if (heroCanvas) {
+    heroCanvas.width = window.innerWidth;
+    heroCanvas.height = window.innerHeight;
+    renderFrame(heroCanvas, heroCtx, heroImages, Math.max(0, lastHeroFrame));
+  }
 
-  ttCanvas.width = window.innerWidth;
-  ttCanvas.height = window.innerHeight;
-  renderFrame(ttCanvas, ttCtx, ttImages, Math.max(0, lastTtFrame));
+  if (ttCanvas) {
+    ttCanvas.width = window.innerWidth;
+    ttCanvas.height = window.innerHeight;
+    renderFrame(ttCanvas, ttCtx, ttImages, Math.max(0, lastTtFrame));
+  }
   
   generateAboutRuler();
 }
@@ -210,7 +204,6 @@ window.addEventListener('scroll', () => {
       onScroll();
       ticking = false;
     });
-    ticking = true;
   }
 });
 
@@ -218,7 +211,7 @@ window.addEventListener('scroll', () => {
 // HERO SECTION HANDLER
 // ==========================================
 function updateHeroCanvas(p) {
-  // Cap progress at 0.75 so the image sequence reaches the end exactly when the about section starts overlapping
+  if (!heroCanvas) return;
   const cappedProgress = Math.min(p / 0.75, 1);
   const frameIndex = Math.floor(cappedProgress * (HERO_TOTAL_FRAMES - 1));
   if (frameIndex !== lastHeroFrame) {
@@ -352,7 +345,7 @@ function generateTimetableCards() {
 }
 
 function updateTimetableCanvas(p) {
-  // Cap progress at 0.84 so the image sequence reaches the end exactly when the footer overlap starts
+  if (!ttCanvas) return;
   const cappedP = Math.min(p / 0.84, 1);
   const frameIndex = Math.floor(cappedP * (TIMETABLE_TOTAL_FRAMES - 1));
   if (frameIndex !== lastTtFrame) {
@@ -536,12 +529,16 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==========================================
 // NETWORK CANVAS GIMMICK (Background Mouse Trail)
 // ==========================================
-const netCanvas = document.getElementById('networkCanvas');
-const netCtx = netCanvas.getContext('2d');
+const netCanvases = document.querySelectorAll('.net-canvas');
+const netCtxs = Array.from(netCanvases).map(c => c.getContext('2d'));
+
 let netW = window.innerWidth;
 let netH = window.innerHeight;
-netCanvas.width = netW;
-netCanvas.height = netH;
+
+netCanvases.forEach(c => {
+  c.width = netW;
+  c.height = netH;
+});
 
 const netParticles = [];
 const mouse = { x: -1000, y: -1000 };
@@ -560,8 +557,10 @@ for (let i = 0; i < 40; i++) {
 window.addEventListener('resize', () => {
   netW = window.innerWidth;
   netH = window.innerHeight;
-  netCanvas.width = netW;
-  netCanvas.height = netH;
+  netCanvases.forEach(c => {
+    c.width = netW;
+    c.height = netH;
+  });
 });
 
 window.addEventListener('mousemove', (e) => {
@@ -570,7 +569,7 @@ window.addEventListener('mousemove', (e) => {
 });
 
 function drawNetwork() {
-  netCtx.clearRect(0, 0, netW, netH);
+  netCtxs.forEach(ctx => ctx.clearRect(0, 0, netW, netH));
   
   const accentStr = '44, 123, 182'; 
 
@@ -581,10 +580,12 @@ function drawNetwork() {
     if (p.x < 0 || p.x > netW) p.vx *= -1;
     if (p.y < 0 || p.y > netH) p.vy *= -1;
     
-    netCtx.beginPath();
-    netCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-    netCtx.fillStyle = `rgba(${accentStr}, 0.6)`;
-    netCtx.fill();
+    netCtxs.forEach(ctx => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${accentStr}, 0.6)`;
+      ctx.fill();
+    });
     
     // Connect to mouse
     const dx = mouse.x - p.x;
@@ -592,12 +593,14 @@ function drawNetwork() {
     const dist = Math.sqrt(dx * dx + dy * dy);
     
     if (dist < 150) {
-      netCtx.beginPath();
-      netCtx.moveTo(p.x, p.y);
-      netCtx.lineTo(mouse.x, mouse.y);
-      netCtx.strokeStyle = `rgba(${accentStr}, ${0.8 * (1 - dist / 150)})`;
-      netCtx.lineWidth = 1.5;
-      netCtx.stroke();
+      netCtxs.forEach(ctx => {
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(mouse.x, mouse.y);
+        ctx.strokeStyle = `rgba(${accentStr}, ${0.8 * (1 - dist / 150)})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      });
     }
   });
   
@@ -610,12 +613,14 @@ function drawNetwork() {
       const dy = p1.y - p2.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
       if (dist < 100) {
-        netCtx.beginPath();
-        netCtx.moveTo(p1.x, p1.y);
-        netCtx.lineTo(p2.x, p2.y);
-        netCtx.strokeStyle = `rgba(${accentStr}, ${0.4 * (1 - dist / 100)})`;
-        netCtx.lineWidth = 1;
-        netCtx.stroke();
+        netCtxs.forEach(ctx => {
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.strokeStyle = `rgba(${accentStr}, ${0.4 * (1 - dist / 100)})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        });
       }
     }
   }

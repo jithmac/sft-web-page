@@ -34,6 +34,9 @@ body { font-family: var(--font-display); background: var(--white); color: var(--
 .sticky-section  { position: sticky; top: 0; height: 100vh; overflow: hidden; width: 100%; box-shadow: 0 -15px 40px rgba(0,0,0,0.15); }
 
 canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+.webp-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; object-fit: cover; opacity: 0; transition: opacity 0.8s ease; }
+.webp-bg.loaded { opacity: 1; }
+.net-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
 
 /* -------------------------------- */
 /* Loading Screen                   */
@@ -216,7 +219,7 @@ canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index
 .d-chart { top: 25%; left: 8%; width: 50px; height: 50px; animation-delay: 2s; }
 @keyframes floatDecor { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-20px) rotate(5deg); } }
 
-.about-content { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.about-content { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 10; }
 
 /* Bio Panel */
 .about-bio {
