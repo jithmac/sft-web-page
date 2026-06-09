@@ -182,12 +182,10 @@ function onScroll() {
   
   const heroProgress = getSectionProgress(heroWrapper);
   updateHeroCanvas(heroProgress);
-  if (!isMobile) updateHeroText(heroProgress);
+  updateHeroText(heroProgress);
 
-  if (!isMobile) {
-    const aboutProgress = getSectionProgress(aboutWrapper);
-    updateAboutPhase(aboutProgress);
-  }
+  const aboutProgress = getSectionProgress(aboutWrapper);
+  updateAboutPhase(aboutProgress);
 
   const ttProgress = getSectionProgress(ttWrapper);
   updateTimetableCanvas(ttProgress);
@@ -235,24 +233,31 @@ function updateHeroText(p) {
     name.style.animation = 'none';
   }
 
+  // Mobile limits
+  const transA1 = isMobile ? 60 : 120;
+  const transA2 = isMobile ? 80 : 140;
+  const transB = isMobile ? 120 : 220;
+
   // Phase A (p: 0 → 0.55): tagline + desc scroll up and fade out
   const phaseA = Math.min(p / 0.55, 1);
-  sub.style.transform = `translateY(${-phaseA * 120}px)`;
+  sub.style.transform = `translateY(${-phaseA * transA1}px)`;
   sub.style.opacity = 1 - phaseA;
-  tagline.style.transform = `translateY(${-phaseA * 140}px)`;
+  tagline.style.transform = `translateY(${-phaseA * transA2}px)`;
   tagline.style.opacity = 1 - phaseA;
-  desc.style.transform = `translateY(${-phaseA * 120}px)`;
+  desc.style.transform = `translateY(${-phaseA * transA1}px)`;
   desc.style.opacity = 1 - phaseA;
 
   // Phase B (p: 0 → 0.75): teacher name grows and moves up to replace the tagline's exact position
   const phaseB = Math.min(p / 0.75, 1);
-  const nameSizePx = 36 + phaseB * 40;
+  const baseSize = isMobile ? 22 : 36;
+  const maxSize = isMobile ? 36 : 76;
+  const nameSizePx = baseSize + phaseB * (maxSize - baseSize);
   name.style.fontSize = nameSizePx + 'px';
-  name.style.transform = `translateY(${-phaseB * 220}px)`;
+  name.style.transform = `translateY(${-phaseB * transB}px)`;
   
   // Buttons fade in and follow translation
   btns.style.opacity = phaseB;
-  btns.style.transform = `translateY(${-phaseB * 220}px)`;
+  btns.style.transform = `translateY(${-phaseB * transB}px)`;
 }
 
 // ==========================================
@@ -288,16 +293,38 @@ function updateAboutPhase(p) {
   const phase2 = Math.max((p - 0.05) / 0.70, 0); // 0 → 1 over p: 0.05→0.75
   const actualPhase2 = Math.min(1, phase2);
 
-  // Bio disappears to left side (translate by -50vw to fully exit)
-  bioEl.style.transform = `translateX(${-actualPhase2 * 50}vw)`;
-  bioEl.style.opacity = 1 - actualPhase2;
+  if (isMobile) {
+    // 0 -> 0.5: Bio exits, Photo enters
+    // 0.5 -> 1.0: Photo exits, CV enters
+    
+    // Bio
+    const bioPhase = Math.min(phase2 * 2, 1);
+    bioEl.style.transform = `translateX(${-bioPhase * 100}vw) translateY(-50%)`;
+    bioEl.style.opacity = 1 - bioPhase;
 
-  // Photo slides left to the position where bio was
-  photoEl.style.transform = `translateX(${-actualPhase2 * 60}vw)`;
+    // Photo
+    let photoPhaseIn = Math.min(phase2 * 2, 1);
+    let photoPhaseOut = Math.max((phase2 - 0.5) * 2, 0);
+    const photoX = (1 - photoPhaseIn) * 100 - photoPhaseOut * 100;
+    photoEl.style.transform = `translateX(${photoX}vw) translateY(-50%)`;
+    photoEl.style.opacity = photoPhaseIn - photoPhaseOut;
 
-  // CV section appears on right side, fading in
-  cvEl.style.transform = `translateX(${(1 - actualPhase2) * 160}px) translateY(-50%)`;
-  cvEl.style.opacity = actualPhase2;
+    // CV
+    const cvPhase = Math.max((phase2 - 0.5) * 2, 0);
+    cvEl.style.transform = `translateX(${(1 - cvPhase) * 100}vw) translateY(-50%)`;
+    cvEl.style.opacity = cvPhase;
+  } else {
+    // Bio disappears to left side (translate by -50vw to fully exit)
+    bioEl.style.transform = `translateX(${-actualPhase2 * 50}vw)`;
+    bioEl.style.opacity = 1 - actualPhase2;
+
+    // Photo slides left to the position where bio was
+    photoEl.style.transform = `translateX(${-actualPhase2 * 60}vw)`;
+
+    // CV section appears on right side, fading in
+    cvEl.style.transform = `translateX(${(1 - actualPhase2) * 160}px) translateY(-50%)`;
+    cvEl.style.opacity = actualPhase2;
+  }
   
   // Ruler slides left with the about section content
   if (aboutRulerEl) {
@@ -359,15 +386,7 @@ function updateTimetableCards(p) {
   if (p > 0.05) ttHeader.classList.add('in-view');
   else ttHeader.classList.remove('in-view');
 
-  if (isMobile) {
-    ttCardEls.forEach(card => {
-      card.style.transform = '';
-      card.style.opacity = '';
-      card.style.top = '';
-      card.style.pointerEvents = 'auto';
-    });
-    return;
-  }
+  // Mobile animation checks removed so it behaves like desktop
 
   // cappedP goes from 0 to 1 over the first 84% of the section (finishes right before footer overlaps)
   const cappedP = Math.min(p / 0.84, 1);
