@@ -135,6 +135,10 @@ function renderFrame(canvas, ctx, images, index) {
     offsetX = (canvas.width - drawWidth) / 2;
   }
 
+  if (isMobile && canvas.id === 'ttCanvas') {
+    offsetX += 150;
+  }
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
 }
